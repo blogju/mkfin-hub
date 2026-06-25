@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捷报比分 · 赛事信息聚合页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #fcedd9 0%, #f7d9b8 50%, #f2c79e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 1.2rem;
+            line-height: 1.6;
+            color: #2b211b;
+        }
+        .page {
+            max-width: 960px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            border-radius: 48px 48px 32px 32px;
+            box-shadow: 0 20px 40px -12px rgba(120, 60, 20, 0.25);
+            padding: 2.4rem 2.8rem 3.2rem;
+            transition: all 0.2s ease;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.8rem; }
+            .page { padding: 1.8rem 1.2rem 2.2rem; border-radius: 32px; }
+        }
+
+        /* hero 横幅区域 */
+        .hero {
+            background: linear-gradient(112deg, #d9733e 0%, #ba5f32 100%);
+            margin: -1.2rem -1.6rem 2rem;
+            padding: 2.8rem 2.4rem 2.4rem;
+            border-radius: 40px 40px 28px 28px;
+            color: #fff9f0;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.06), 0 12px 24px -10px rgba(150, 70, 20, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(255,230,190,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+        .hero p {
+            margin-top: 0.8rem;
+            font-size: 1.05rem;
+            opacity: 0.9;
+            max-width: 70%;
+            position: relative;
+            z-index: 1;
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 2rem 1.2rem 1.8rem; margin: -0.8rem -0.6rem 1.6rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { max-width: 100%; font-size: 0.95rem; }
+        }
+
+        /* 卡片式内容块 */
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            margin-bottom: 2.2rem;
+        }
+        .card {
+            background: #fffcf7;
+            border-radius: 24px;
+            padding: 1.6rem 2rem;
+            box-shadow: 0 4px 12px rgba(130, 70, 30, 0.08);
+            border: 1px solid #f5e7db;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(140, 75, 30, 0.12);
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #7c4c2a;
+            margin-bottom: 0.6rem;
+            border-left: 5px solid #c66e3e;
+            padding-left: 0.75rem;
+        }
+        .card p {
+            margin-bottom: 0.5rem;
+            color: #3d2c22;
+        }
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.6rem 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+        }
+        .card ul li {
+            position: relative;
+            padding-left: 1rem;
+            font-size: 0.95rem;
+            color: #3f2d21;
+        }
+        .card ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #b96738;
+            font-weight: 700;
+        }
+
+        /* 特点亮点小标签 */
+        .feature-badge {
+            display: inline-block;
+            background: #f2ddd0;
+            color: #5f3a24;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-right: 0.3rem;
+        }
+
+        /* FAQ 摘要样式 */
+        .faq-mini {
+            background: #fbf3ea;
+            border-radius: 24px;
+            padding: 1.6rem 2rem;
+            margin: 2rem 0 1.8rem;
+            border: 1px solid #e8d6c6;
+        }
+        .faq-mini h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #794a2c;
+            margin-bottom: 0.7rem;
+        }
+        .faq-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .faq-item strong {
+            color: #5a3721;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .faq-item span {
+            font-size: 0.92rem;
+            color: #3d2b1d;
+            line-height: 1.5;
+        }
+
+        /* 页尾访问提示 */
+        .footer-note {
+            border-top: 2px dashed #ddc7b4;
+            padding-top: 1.6rem;
+            margin-top: 0.4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #3b2a1f;
+        }
+        .footer-note a {
+            color: #b2582a;
+            font-weight: 600;
+            text-decoration: none;
+            background: #fdf2e8;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            transition: background 0.15s, color 0.15s;
+            display: inline-block;
+            border: 1px solid #dba67b;
+            margin: 0 0.2rem;
+        }
+        .footer-note a:hover {
+            background: #d16a38;
+            color: #fffaf0;
+            border-color: #b65a2a;
+        }
+        .footer-note .sub {
+            font-size: 0.85rem;
+            color: #6f5544;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* 辅助间距 */
+        .spacer-sm { height: 0.8rem; }
+        .inline-highlight {
+            background: #fae2d0;
+            padding: 0.1rem 0.4rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- 首页横幅 hero -->
+    <div class="hero">
+        <h1>⚽ 捷报比分 · 赛事信息聚合</h1>
+        <p>覆盖主流联赛、杯赛及热门对抗的数据参考页，从稳定入口快速定位你所关注的赛场动态。</p>
+    </div>
+
+    <!-- 背景说明 + 三段介绍 (以卡片形式呈现) -->
+    <div class="card-grid">
+
+        <div class="card">
+            <h2>一份简洁的赛事信息面板</h2>
+            <p>
+                网站 <span class="inline-highlight">url-nowscore.com</span> 定位为轻量级赛事信息聚合节点，
+                围绕「捷报比分」这一核心索引，将分散的赛程、实时比分变动以及统计数据整合为直观的卡片式界面。
+                无需频繁跳转多个页面，即可快速浏览多个联赛的当前战况与关键节点。
+            </p>
+            <p>
+                页面采用温暖柔和的渐变底色与高辨识度的圆角模块，信息层级分明。从整体看，它更适合赛前快速查阅阵容、赛中追踪实时变化，或赛后回顾关键数据。
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>稳定入口与可预期的浏览体验</h2>
+            <p>
+                在信息过载的赛事环境中，一个稳定的访问入口意味着更少的认知负担。
+                <a href="https://url-nowscore.com">捷报比分</a> 作为该页面的锚点链接，始终保持一致的指向与命名，
+                让你在收藏夹、笔记或分享场景中都能精准定位。页面不依赖复杂脚本，加载迅捷，版式在移动端和桌面端均保持清晰可读。
+            </p>
+            <p>
+                所有模块均围绕「赛事数据透明化」展开，不设弹窗或冗余跳转，尽量减少中途干扰。
+                对于日常需要关注多场次比分的用户来说，这种克制的设计降低了每次查看的心理门槛。
+            </p>
+            <ul>
+                <li>实时比分、赛程、联赛覆盖</li>
+                <li>自适应卡片布局，信息密度适中</li>
+                <li>暖白底色 + 圆角按钮感链接</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>适用场景与信息构成</h2>
+            <p>
+                无论是赛前浏览当日对阵、赛中快速刷新实时记分牌，还是赛后查阅最终结果，
+                通过 <a href="https://url-nowscore.com">捷报比分</a> 均可获得结构化的数据呈现。
+                页面主要分为赛程概览、焦点战实时动态以及联赛积分简表三个信息区域（视具体内容版本而定）。
+            </p>
+            <p>
+                值得一提的是，整个页面的色彩系统偏向暖橙与米白，配合柔和的投影与圆角，让长时间浏览也不易产生视觉疲劳。
+                每个可点击元素均采用按钮感的圆角样式，提示清晰且反馈明确。
+            </p>
+            <p>
+                <span class="feature-badge">⚡ 快速加载</span>
+                <span class="feature-badge">📱 响应式</span>
+                <span class="feature-badge">🧩 数据聚合</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- FAQ 摘要 —— 简洁问答风格，增加信息层次 -->
+    <div class="faq-mini">
+        <h3>常见疑问 · 摘要</h3>
+        <div class="faq-item">
+            <strong>页面数据更新频率如何？</strong>
+            <span>网站基于赛事信息源同步，重要比赛比分在常规时段内保持接近实时的刷新节奏，具体延迟依数据接口而定。</span>
+        </div>
+        <div class="faq-item">
+            <strong>是否覆盖所有联赛？</strong>
+            <span>以主流欧洲联赛、亚洲重点赛事以及国际杯赛为主，次级联赛覆盖视数据源情况逐步补充。你可以通过页面顶部的导航分类筛选感兴趣的赛事。</span>
+        </div>
+        <div class="faq-item">
+            <strong>移动端浏览体验如何？</strong>
+            <span>页面采用弹性布局与相对单位，在手机与平板上自动适配卡片宽度与字体大小，按钮及链接区域增大触控面积，操作顺手。</span>
+        </div>
+    </div>
+
+    <!-- 页尾访问提示 -->
+    <div class="footer-note">
+        <p>
+            如需获取完整的赛程列表、深度数据或自定义关注队伍，可直接访问
+            <a href="https://url-nowscore.com">捷报比分</a>
+            页面，所有赛事信息均汇集于此。
+        </p>
+        <span class="sub">—— 暖色渐变 · 信息聚合 · 简洁入口 ——</span>
+    </div>
+
+</div>
+</body>
+</html>
